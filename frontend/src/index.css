@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 25% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 25% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 25% 8%;
+
+    --primary: 210 66% 17%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 210 25% 8%;
+
+    --muted: 210 15% 96%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 210 60% 94%;
+    --accent-foreground: 210 66% 17%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+    --ring: 210 66% 17%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 210 25% 6%;
+    --foreground: 210 15% 95%;
+    --card: 210 25% 9%;
+    --card-foreground: 210 15% 95%;
+    --popover: 210 25% 9%;
+    --popover-foreground: 210 15% 95%;
+    --primary: 210 60% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 15%;
+    --secondary-foreground: 210 15% 95%;
+    --muted: 210 15% 15%;
+    --muted-foreground: 210 10% 60%;
+    --accent: 210 30% 20%;
+    --accent-foreground: 210 60% 80%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 15% 18%;
+    --input: 210 15% 18%;
+    --ring: 210 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/*
+ * PDF export. "Download PDF" calls window.print().
+ *
+ * <PrintableResume> is portalled to <body> as a sibling of #root. On screen it
+ * is hidden by this base rule; while printing, @media print hides #root and
+ * shows only #resume-print in NORMAL document flow, so the browser paginates
+ * the real resume content (no blank pages from the hidden editor page, no
+ * position:absolute clipping). Selectable text, same templates as the preview.
+ */
+#resume-print {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    /* Zero page margin so the browser draws no header/footer band
+       (date / URL / page numbers). The sheet supplies its own margin. */
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  /* Hide the entire app; render only the resume document. */
+  #root {
+    display: none !important;
+  }
+
+  #resume-print {
+    display: block !important;
+    /* keep template accent colours (e.g. the Modern sidebar) in the PDF */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .resume-print-sheet {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 14mm;
+    color: #0f172a;
+  }
+
+  /* Keep an individual role / degree / reference from splitting across pages. */
+  #resume-print .resume-item {
+    break-inside: avoid;
+  }
+
+  /* Don't strand a section heading or the name header at the foot of a page. */
+  #resume-print h2,
+  #resume-print header {
+    break-after: avoid;
+  }
+
+  #resume-print img {
+    max-width: 100%;
+  }
+}
