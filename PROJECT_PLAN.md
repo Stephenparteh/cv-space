@@ -37,33 +37,33 @@ The MVP must allow:
 
 ### Guest users
 
-* Create a resume without an account
-* Enter professional information
-* Add personal information
-* Add a professional summary
-* Add work experience
-* Add education
-* Add skills
-* Select a resume template
-* See a live resume preview
-* Switch between templates
-* Download the finished resume as a PDF
+- Create a resume without an account
+- Enter professional information
+- Add personal information
+- Add a professional summary
+- Add work experience
+- Add education
+- Add skills
+- Select a resume template
+- See a live resume preview
+- Switch between templates
+- Download the finished resume as a PDF
 
 ### Registered users
 
 Registered users can do everything a guest can do, plus:
 
-* Create an account
-* Log in
-* Log out
-* Save resumes
-* View saved resumes
-* Edit saved resumes
-* Delete saved resumes
-* Duplicate resumes
-* Create multiple resumes
-* Access a dashboard
-* Generate shareable resume links
+- Create an account
+- Log in
+- Log out
+- Save resumes
+- View saved resumes
+- Edit saved resumes
+- Delete saved resumes
+- Duplicate resumes
+- Create multiple resumes
+- Access a dashboard
+- Generate shareable resume links
 
 ---
 
@@ -115,12 +115,12 @@ A guest user does not need an account to create or download a resume.
 
 Guest capabilities:
 
-* Create resume
-* Edit resume
-* Preview resume
-* Select template
-* Switch templates
-* Download PDF
+- Create resume
+- Edit resume
+- Preview resume
+- Select template
+- Switch templates
+- Download PDF
 
 Guest resume data may initially exist only in frontend/client state.
 
@@ -132,16 +132,16 @@ Account creation should not be required simply to create or download a resume.
 
 A registered user can:
 
-* Create resumes
-* Save resumes
-* Edit saved resumes
-* Delete resumes
-* Duplicate resumes
-* Create multiple resumes
-* View saved resumes
-* Access dashboard
-* Generate shareable links
-* Access saved resumes from different sessions
+- Create resumes
+- Save resumes
+- Edit saved resumes
+- Delete resumes
+- Duplicate resumes
+- Create multiple resumes
+- View saved resumes
+- Access dashboard
+- Generate shareable links
+- Access saved resumes from different sessions
 
 Authentication is required for saved-resume functionality.
 
@@ -159,12 +159,12 @@ The MVP resume data model contains:
 
 The data model should remain reusable and structured so that the same resume data can be consumed by:
 
-* The editor
-* Live preview
-* Resume templates
-* PDF generation
-* Saved resumes
-* Shared resumes
+- The editor
+- Live preview
+- Resume templates
+- PDF generation
+- Saved resumes
+- Shared resumes
 
 ---
 
@@ -200,12 +200,12 @@ The resume preview must update automatically as the user edits the resume.
 
 Requirements:
 
-* Real-time updates
-* Template switching without losing data
-* Mobile-friendly preview
-* Desktop-friendly preview
-* Consistent resume data across templates
-* Preview should closely match the eventual PDF output
+- Real-time updates
+- Template switching without losing data
+- Mobile-friendly preview
+- Desktop-friendly preview
+- Consistent resume data across templates
+- Preview should closely match the eventual PDF output
 
 The preview should be treated as a renderer of resume data rather than a separate source of truth.
 
@@ -215,20 +215,20 @@ The preview should be treated as a renderer of resume data rather than a separat
 
 The final PDF must:
 
-* Match the selected resume template
-* Closely match the live preview
-* Contain selectable text
-* Support multiple pages
-* Have professional spacing
-* Print correctly
-* Maintain proper page breaks
-* Work reliably on desktop and mobile workflows where technically supported
+- Match the selected resume template
+- Closely match the live preview
+- Contain selectable text
+- Support multiple pages
+- Have professional spacing
+- Print correctly
+- Maintain proper page breaks
+- Work reliably on desktop and mobile workflows where technically supported
 
 Potential technologies include:
 
-* Puppeteer
-* React-PDF
-* Another justified PDF solution
+- Puppeteer
+- React-PDF
+- Another justified PDF solution
 
 The final PDF technology has not yet been locked.
 
@@ -406,31 +406,31 @@ Database
 
 Frontend responsibilities include:
 
-* User interface
-* Form interaction
-* Client-side validation
-* Resume editing
-* Live preview
-* Template selection
-* API communication
+- User interface
+- Form interaction
+- Client-side validation
+- Resume editing
+- Live preview
+- Template selection
+- API communication
 
 Backend responsibilities include:
 
-* Authentication
-* Authorization
-* Backend validation
-* Resume persistence
-* Resume ownership
-* Data isolation
-* API responses
-* Security
+- Authentication
+- Authorization
+- Backend validation
+- Resume persistence
+- Resume ownership
+- Data isolation
+- API responses
+- Security
 
 Database responsibilities include:
 
-* Persistent storage
-* User records
-* Resume records
-* Resume ownership data
+- Persistent storage
+- User records
+- Resume records
+- Resume ownership data
 
 The frontend must never be treated as the source of truth for security or authorization.
 
@@ -536,11 +536,11 @@ Database credentials must remain in environment variables.
 
 Never expose:
 
-* MongoDB URI
-* MongoDB username
-* MongoDB password
-* JWT secret
-* JWT tokens unnecessarily
+- MongoDB URI
+- MongoDB username
+- MongoDB password
+- JWT secret
+- JWT tokens unnecessarily
 
 ---
 
@@ -558,18 +558,18 @@ updatedAt
 
 Email requirements:
 
-* Unique
-* Lowercase
-* Trimmed
+- Unique
+- Lowercase
+- Trimmed
 
 Password requirements:
 
-* Minimum 8 characters
-* bcrypt hashed
-* 10 salt rounds
-* Stored as a hash
-* Never returned through normal API serialization
-* Schema uses `select: false`
+- Minimum 8 characters
+- bcrypt hashed
+- 10 salt rounds
+- Stored as a hash
+- Never returned through normal API serialization
+- Schema uses `select: false`
 
 The User model removes sensitive/internal fields from normal JSON responses.
 
@@ -641,9 +641,9 @@ req.userId
 
 Protected endpoints must reject:
 
-* Missing authentication
-* Invalid authentication
-* Unauthorized access
+- Missing authentication
+- Invalid authentication
+- Unauthorized access
 
 ---
 
@@ -697,12 +697,12 @@ POST /api/auth/register
 
 Verified:
 
-* Valid registration works
-* User is saved to MongoDB
-* Password is bcrypt hashed
-* Duplicate email is rejected
-* Invalid input is rejected
-* Password is not returned
+- Valid registration works
+- User is saved to MongoDB
+- Password is bcrypt hashed
+- Duplicate email is rejected
+- Invalid input is rejected
+- Password is not returned
 
 ### Login
 
@@ -712,11 +712,11 @@ POST /api/auth/login
 
 Verified:
 
-* Correct credentials return a JWT
-* Incorrect password is rejected
-* Non-existent email is rejected
-* Generic authentication errors prevent user enumeration
-* Password is not returned
+- Correct credentials return a JWT
+- Incorrect password is rejected
+- Non-existent email is rejected
+- Generic authentication errors prevent user enumeration
+- Password is not returned
 
 ### `/me`
 
@@ -726,10 +726,10 @@ GET /api/auth/me
 
 Verified:
 
-* Valid JWT returns the authenticated user
-* Missing token returns HTTP 401
-* Invalid token returns HTTP 401
-* Password is not returned
+- Valid JWT returns the authenticated user
+- Missing token returns HTTP 401
+- Invalid token returns HTTP 401
+- Password is not returned
 
 ---
 
@@ -794,15 +794,15 @@ Exact field definitions must be reviewed before implementation.
 
 The schema should support:
 
-* Current MVP sections
-* Multiple experiences
-* Multiple education records
-* Multiple skills
-* Template selection
-* Future template rendering
-* Saved resume editing
-* Sharing
-* Multiple resumes per user
+- Current MVP sections
+- Multiple experiences
+- Multiple education records
+- Multiple skills
+- Template selection
+- Future template rendering
+- Saved resume editing
+- Sharing
+- Multiple resumes per user
 
 Avoid unnecessary fields.
 
@@ -836,11 +836,11 @@ Find any resume by ID
 
 A user must NEVER be able to:
 
-* Read another user's resume
-* Update another user's resume
-* Delete another user's resume
-* Duplicate another user's resume
-* Access another user's private resume data
+- Read another user's resume
+- Update another user's resume
+- Delete another user's resume
+- Duplicate another user's resume
+- Access another user's private resume data
 
 Ownership must be enforced by the backend.
 
@@ -932,17 +932,17 @@ Validation must exist on both frontend and backend.
 
 Purpose:
 
-* Immediate user feedback
-* Better UX
-* Form guidance
+- Immediate user feedback
+- Better UX
+- Form guidance
 
 ## Backend validation
 
 Purpose:
 
-* Security
-* Data integrity
-* API protection
+- Security
+- Data integrity
+- API protection
 
 The backend must NEVER trust frontend validation.
 
@@ -954,16 +954,16 @@ Invalid or malformed API requests must be rejected by the backend.
 
 The application must include:
 
-* Secure password hashing
-* Authentication
-* Authorization
-* Protected routes
-* Backend validation
-* User data isolation
-* Secure environment variables
-* Sanitized error handling
-* Safe logging
-* Protection against unauthorized resume access
+- Secure password hashing
+- Authentication
+- Authorization
+- Protected routes
+- Backend validation
+- User data isolation
+- Secure environment variables
+- Sanitized error handling
+- Safe logging
+- Protection against unauthorized resume access
 
 Rate limiting should be introduced where appropriate, especially for authentication endpoints, without unnecessarily complicating the MVP.
 
@@ -977,12 +977,12 @@ Production responses must not expose sensitive internal implementation details.
 
 Errors should remain useful to the client while avoiding:
 
-* Database credentials
-* Environment variables
-* Stack traces in production
-* Passwords
-* JWT secrets
-* Sensitive internal data
+- Database credentials
+- Environment variables
+- Stack traces in production
+- Passwords
+- JWT secrets
+- Sensitive internal data
 
 ---
 
@@ -990,21 +990,21 @@ Errors should remain useful to the client while avoiding:
 
 The application must work on:
 
-* Mobile phones
-* Tablets
-* Laptops
-* Desktop computers
+- Mobile phones
+- Tablets
+- Laptops
+- Desktop computers
 
 The UI must be designed mobile-first.
 
 Requirements:
 
-* Touch-friendly controls
-* Responsive layouts
-* Readable typography
-* Appropriate spacing
-* Accessible form controls
-* Usable resume editor on small screens
+- Touch-friendly controls
+- Responsive layouts
+- Readable typography
+- Appropriate spacing
+- Accessible form controls
+- Usable resume editor on small screens
 
 Desktop enhancements should be added after the mobile experience works properly.
 
@@ -1014,19 +1014,19 @@ Desktop enhancements should be added after the mobile experience works properly.
 
 ## Public screens
 
-* Landing page
-* Resume creation/editor
-* Template selection
-* Resume preview
-* Login
-* Registration
-* Shared resume view
+- Landing page
+- Resume creation/editor
+- Template selection
+- Resume preview
+- Login
+- Registration
+- Shared resume view
 
 ## Authenticated screens
 
-* Dashboard
-* Resume editor
-* Saved resume view/edit
+- Dashboard
+- Resume editor
+- Saved resume view/edit
 
 The exact routing structure may evolve as implementation progresses.
 
@@ -1036,14 +1036,14 @@ The exact routing structure may evolve as implementation progresses.
 
 The registered-user dashboard will eventually support:
 
-* Viewing saved resumes
-* Creating resumes
-* Opening resumes
-* Editing resumes
-* Duplicating resumes
-* Deleting resumes
-* Viewing last-edited time
-* Managing multiple resumes
+- Viewing saved resumes
+- Creating resumes
+- Opening resumes
+- Editing resumes
+- Duplicating resumes
+- Deleting resumes
+- Viewing last-edited time
+- Managing multiple resumes
 
 Dashboard implementation should occur only after the underlying Resume CRUD API is stable.
 
@@ -1111,20 +1111,20 @@ Important testing areas:
 
 ### Backend
 
-* Authentication
-* Validation
-* Resume CRUD
-* Ownership
-* Authorization
-* Error handling
+- Authentication
+- Validation
+- Resume CRUD
+- Ownership
+- Authorization
+- Error handling
 
 ### Frontend
 
-* Resume form
-* Editor
-* Template switching
-* Preview
-* Authentication state
+- Resume form
+- Editor
+- Template switching
+- Preview
+- Authentication state
 
 ### End-to-end
 
@@ -1204,16 +1204,16 @@ COMPLETE ✅
 
 Covers:
 
-* Project foundation (separation from the legacy project)
-* Frontend setup — React + TypeScript + Vite + Tailwind + shadcn/ui + React Router
-* Backend setup — Node.js + Express + TypeScript + tsx
-* MongoDB Atlas connection via Mongoose
-* Centralized error handling, CORS, environment configuration, health endpoint
-* User model (bcrypt, `select: false`)
-* Registration, login, logout, `/me`
-* JWT (Bearer tokens, `{ sub }` payload, `JWT_EXPIRES_IN`)
-* Authentication middleware → `req.userId`
-* Protected routes, input validation, security/log verification
+- Project foundation (separation from the legacy project)
+- Frontend setup — React + TypeScript + Vite + Tailwind + shadcn/ui + React Router
+- Backend setup — Node.js + Express + TypeScript + tsx
+- MongoDB Atlas connection via Mongoose
+- Centralized error handling, CORS, environment configuration, health endpoint
+- User model (bcrypt, `select: false`)
+- Registration, login, logout, `/me`
+- JWT (Bearer tokens, `{ sub }` payload, `JWT_EXPIRES_IN`)
+- Authentication middleware → `req.userId`
+- Protected routes, input validation, security/log verification
 
 ---
 
@@ -1227,9 +1227,9 @@ COMPLETE ✅
 
 Covers:
 
-* Resume Mongoose model (nested personal info, experience[], education[], skills[], template, timestamps)
-* Owner reference (`ownerId`), immutable after creation
-* Resume CRUD API — all authenticated, all owner-scoped:
+- Resume Mongoose model (nested personal info, experience[], education[], skills[], template, timestamps)
+- Owner reference (`ownerId`), immutable after creation
+- Resume CRUD API — all authenticated, all owner-scoped:
 
   ```text
   GET    /api/resumes
@@ -1239,20 +1239,20 @@ Covers:
   DELETE /api/resumes/:id
   ```
 
-* Ownership enforced in the query filter; cross-user access returns 404
-* Mass-assignment protection (`ownerId` / timestamps cannot be set by the client)
-* Full Resume Editor at `/resumes/:id/edit`
+- Ownership enforced in the query filter; cross-user access returns 404
+- Mass-assignment protection (`ownerId` / timestamps cannot be set by the client)
+- Full Resume Editor at `/resumes/:id/edit`
+  - Resume title
+  - Personal information
+  - Professional summary
+  - Work experience — add / edit / remove
+  - Education — add / edit / remove
+  - Skills — add / edit / remove (`string[]`)
+  - Template selection / state
+  - Loading / 404 / 401 / error states
+  - Save (`PUT`), unsaved-changes indicator, refresh + in-app navigation guards
 
-  * Resume title
-  * Personal information
-  * Professional summary
-  * Work experience — add / edit / remove
-  * Education — add / edit / remove
-  * Skills — add / edit / remove (`string[]`)
-  * Template selection / state
-  * Loading / 404 / 401 / error states
-  * Save (`PUT`), unsaved-changes indicator, refresh + in-app navigation guards
-* Minimal sign-in / register screen to obtain a JWT in the browser
+- Minimal sign-in / register screen to obtain a JWT in the browser
 
 ---
 
@@ -1266,13 +1266,13 @@ COMPLETE ✅
 
 Covers:
 
-* Real-time resume preview rendered from the live editor state (no save required)
-* Preview updates as any field, section, or the selected template changes
-* Reusable template renderer architecture: `Resume Data → Renderer → Classic | Modern | Minimal`
-* Three professional, visually distinct template designs — Classic, Modern, Minimal
-* Two-column editor / preview layout on desktop; stacked, non-overflowing layout on mobile
-* No second source of truth — templates are pure presentational components fed the editor state
-* Backend / API contract unchanged
+- Real-time resume preview rendered from the live editor state (no save required)
+- Preview updates as any field, section, or the selected template changes
+- Reusable template renderer architecture: `Resume Data → Renderer → Classic | Modern | Minimal`
+- Three professional, visually distinct template designs — Classic, Modern, Minimal
+- Two-column editor / preview layout on desktop; stacked, non-overflowing layout on mobile
+- No second source of truth — templates are pure presentational components fed the editor state
+- Backend / API contract unchanged
 
 ---
 
@@ -1286,18 +1286,18 @@ COMPLETE ✅
 
 Covers:
 
-* PDF generation and download — implemented via `window.print()` + an `@media print`
+- PDF generation and download — implemented via `window.print()` + an `@media print`
   A4 stylesheet and an off-screen `<PrintableResume>`; reuses the same template
   components as the live preview (Classic preview ⇒ Classic PDF). Zero new
   dependencies, real selectable text, browser-handled pagination.
-* PDF reflects the current editor state (including unsaved edits) and never writes
+- PDF reflects the current editor state (including unsaved edits) and never writes
   to the backend.
-* Resume dashboard at `/dashboard` — list, create, open/edit, delete, empty /
+- Resume dashboard at `/dashboard` — list, create, open/edit, delete, empty /
   loading / error states.
-* Multiple saved resumes per user; each card shows title, template, last-updated.
-* Create / open / edit / delete all go through the existing Resume CRUD API
+- Multiple saved resumes per user; each card shows title, template, last-updated.
+- Create / open / edit / delete all go through the existing Resume CRUD API
   (`GET/POST/GET:id/PUT:id/DELETE:id`); no new backend endpoints.
-* Auth-aware header nav (Dashboard / Sign out); login lands on `/dashboard`.
+- Auth-aware header nav (Dashboard / Sign out); login lands on `/dashboard`.
 
 ---
 
@@ -1311,22 +1311,22 @@ COMPLETE ✅
 
 Covers:
 
-* **Public resume links** — `Resume.isPublic` (default `false`) + server-minted
+- **Public resume links** — `Resume.isPublic` (default `false`) + server-minted
   `publicSlug` (readable stem + `node:crypto` random suffix; no ObjectIds in URLs;
   reused across private↔public toggles). Toggle via `PUT /api/resumes/:id/visibility`
   (auth, owner-scoped). Public read at `GET /api/public/resumes/:slug` (no auth,
   allowlisted shape). Route `/r/:slug`.
-* **Public profiles** — new one-per-user `Profile` model (`displayName`, `headline`,
+- **Public profiles** — new one-per-user `Profile` model (`displayName`, `headline`,
   `bio`, `location`, `skills`, `isPublic`, `inDirectory`, `featuredResumeId`, minted
   `slug`). Optional. `GET|PUT /api/profile` (auth); `GET /api/public/profiles/:slug`
   (no auth). Route `/profile/:slug`. One featured public resume per profile (MVP).
-* **Directory** — `GET /api/public/directory?q=&skill=` (no auth); only
+- **Directory** — `GET /api/public/directory?q=&skill=` (no auth); only
   `isPublic && inDirectory` profiles; case-insensitive (escaped) regex on
   `headline` / `skills`. Route `/directory`.
-* Visibility controls in the editor (Sharing card) + per-resume badge/copy-link on
+- Visibility controls in the editor (Sharing card) + per-resume badge/copy-link on
   the dashboard; profile editor at `/settings/profile`. Clipboard API for copy.
-* Migration-safe: new fields default to private; nothing existing becomes public.
-* No new dependencies. Existing `/api/resumes/*` unchanged (auth + owner-scoped).
+- Migration-safe: new fields default to private; nothing existing becomes public.
+- No new dependencies. Existing `/api/resumes/*` unchanged (auth + owner-scoped).
 
 ---
 
@@ -1340,22 +1340,22 @@ COMPLETE ✅
 
 Covers:
 
-* Enhanced personal information — `phone2`, `dateOfBirth`, `gender`, `religion`,
+- Enhanced personal information — `phone2`, `dateOfBirth`, `gender`, `religion`,
   `nationality`, optional `photo` (inline data: URL, client-resized, no storage
   service, no dependency). All optional.
-* Work experience `responsibilities: string[]` (bullet points). Legacy
+- Work experience `responsibilities: string[]` (bullet points). Legacy
   `experience.description` is migrated to bullets on load and cleared on the next
   save — no content lost.
-* `certifications[]` (Certifications & Training) as a separate section.
-* `languages[]` (`language` + controlled `proficiency`).
-* `references[]` (private — never returned by any public endpoint).
-* Multi-step wizard editor (8 steps) — same single `fields` state, same save
+- `certifications[]` (Certifications & Training) as a separate section.
+- `languages[]` (`language` + controlled `proficiency`).
+- `references[]` (private — never returned by any public endpoint).
+- Multi-step wizard editor (8 steps) — same single `fields` state, same save
   flow, same unsaved-changes / refresh / navigation guards.
-* Three new templates — Professional, Executive, Creative (six total), all
+- Three new templates — Professional, Executive, Creative (six total), all
   rendering the expanded data with empty sections hidden.
-* Real landing page at `/`.
-* Editor / template-selector / responsive UX polish.
-* Public allowlist deliberately reviewed: `phone2` + `photo` added;
+- Real landing page at `/`.
+- Editor / template-selector / responsive UX polish.
+- Public allowlist deliberately reviewed: `phone2` + `photo` added;
   `dateOfBirth` / `gender` / `religion` / `nationality` / `references` withheld.
 
 ---
@@ -1370,7 +1370,7 @@ COMPLETE ✅
 
 Covers:
 
-* **PDF pagination root cause fixed.** The old print CSS hid the app with
+- **PDF pagination root cause fixed.** The old print CSS hid the app with
   `visibility: hidden` + `position: absolute`, which left the full editor page in
   the print layout — the browser then paginated that whitespace, adding blank
   pages. `<PrintableResume>` now renders through a portal as a `<body>`-level
@@ -1378,13 +1378,13 @@ Covers:
   `#resume-print` in normal flow, so the browser paginates the real résumé
   content. Verified: empty / short / photo → 1 page; medium → 2; long → 3–4;
   across all six templates; clean section-boundary breaks, no clipping.
-* **PDF output cleaned.** `@page { margin: 0 }` removes the browser's
+- **PDF output cleaned.** `@page { margin: 0 }` removes the browser's
   date / URL / page-number band; the sheet supplies its own 14 mm padding. No app
   code renders timestamps, platform name, or URLs into the document.
-* **Regression testing.** Backend `tsc` + `build` + `test:api` (31 tests, incl. 6
+- **Regression testing.** Backend `tsc` + `build` + `test:api` (31 tests, incl. 6
   new M7 hardening tests); frontend `tsc` + `lint` + `build`; headless-browser
   suite (46 checks); PDF suite (30 template × size combinations). All pass.
-* **Security review.** Auth (JWT verify, expiry, tampering → 401 generic), owner
+- **Security review.** Auth (JWT verify, expiry, tampering → 401 generic), owner
   scoping (cross-user read/write/delete/visibility → 404), mass-assignment guard,
   public-endpoint allowlists (DOB / gender / religion / nationality / references
   never served), password never serialized. **Fixed:** Express body-parser errors
@@ -1392,25 +1392,25 @@ Covers:
   now 400 / 413 with a safe message; the 100 kB default JSON limit would have
   500'd real profile photos — raised to a configurable 1 MB. 500 responses are
   now always generic (no dev-mode leak).
-* **Validation / edge cases.** Added a 50-entry cap to repeatable résumé sections
+- **Validation / edge cases.** Added a 50-entry cap to repeatable résumé sections
   and de-duplication of skills. Verified: long strings clamp, unusual Unicode,
   malformed ObjectIds → 400, invalid slugs → 404, oversized / non-data-URL photo
   → 400, invalid proficiency → 400, array / string bodies → 400.
-* **Accessibility.** Added a page `<h1>` to the auth screen and the editor;
+- **Accessibility.** Added a page `<h1>` to the auth screen and the editor;
   section-card titles are now `<h2>` (were `<h3>`, an outline jump); the live
   preview is `aria-hidden` (decorative duplicate of the form); the stepper gained
   `role="progressbar"` and per-step `aria-label`s. Existing coverage confirmed:
   label association, `aria-label` on icon buttons, `role="alert"` on errors,
   `aria-live` on save status, visible focus rings, keyboard-operable wizard.
   Structural audit clean on 12 page / step states.
-* **Responsive.** No horizontal overflow at 390 / 768 / 1280 across home, login,
+- **Responsive.** No horizontal overflow at 390 / 768 / 1280 across home, login,
   directory, dashboard, profile settings, editor (all 8 steps), public résumé,
   and all six templates.
-* **Performance.** Data effects already use `AbortController` (no duplicate
+- **Performance.** Data effects already use `AbortController` (no duplicate
   requests; StrictMode-safe). Photos are client-resized to ≤ 480 px JPEG. Bundle
   ~122 kB gzip, single chunk — acceptable; route code-splitting noted as
   optional. No memoization added (no measured hot path).
-* **Production config & deployment readiness.** Env-driven CORS allowlist
+- **Production config & deployment readiness.** Env-driven CORS allowlist
   (`CORS_ORIGIN`); configurable body limit (`JSON_BODY_LIMIT`); `NODE_ENV`
   documented; SPA history-fallback (`frontend/public/_redirects`); `.env.example`
   files updated for both apps; **`DEPLOYMENT.md`** documents build / start
@@ -1420,12 +1420,12 @@ Covers:
 
 Known non-critical limitations:
 
-* Résumés spanning 3+ pages get a reduced top margin on continuation pages (the
+- Résumés spanning 3+ pages get a reduced top margin on continuation pages (the
   sheet padding applies once, not per printed page). Acceptable without a JS
   pagination library; revisit in the post-M7 UI/UX phase.
-* `frontend/dist` bundle is a single chunk; route-level code-splitting is a
+- `frontend/dist` bundle is a single chunk; route-level code-splitting is a
   possible future optimisation, not a current problem.
-* One pre-existing `oxlint` warning in `components/ui/button.tsx`
+- One pre-existing `oxlint` warning in `components/ui/button.tsx`
   (`react(only-export-components)` on the `buttonVariants` export) — unrelated to
   M7, left as-is.
 
@@ -1485,29 +1485,30 @@ No account should be required for this workflow.
 
 ## Registered user acceptance test
 
-```text
+``text
 Register
-    ↓
+↓
 Login
-    ↓
+↓
 Create resume
-    ↓
+↓
 Save resume
-    ↓
+↓
 View dashboard
-    ↓
+↓
 Open saved resume
-    ↓
+↓
 Edit resume
-    ↓
+↓
 Duplicate resume
-    ↓
+↓
 Delete resume
-    ↓
+↓
 Generate share link
-    ↓
+↓
 Open shared resume
-```
+
+````
 
 A registered user must never be able to access another user's private saved resume.
 
@@ -1639,7 +1640,7 @@ There is an older project located at:
 
 ```text
 C:\Users\USER\Documents\resume-builder_old\
-```
+````
 
 The legacy project is OUT OF SCOPE.
 
