@@ -2,9 +2,37 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
-));
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * "structural" (default) — application layout/containers: editor
+   * sections, settings groupings, form wrapping. Flat, quiet, doesn't
+   * compete with the content inside it.
+   *
+   * "content" — things that ARE the content and benefit from reading as
+   * clickable/browsable: resume cards, directory profiles, template cards.
+   * Gets a resting shadow and a hover lift.
+   *
+   * Existing usage is unaffected — every current <Card> keeps today's
+   * (structural) look until a call site opts into variant="content".
+   */
+  variant?: "structural" | "content";
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = "structural", ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-lg border border-border bg-card text-card-foreground",
+        variant === "structural" && "shadow-flat",
+        variant === "content" &&
+          "shadow-card transition-shadow duration-standard ease-standard hover:shadow-card-hover hover:border-accent/30",
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

@@ -1,39 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Sans:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * CV Space design tokens ("Quiet Confidence" — see PROJECT_PLAN.md design
+ * system notes). Ink Navy is the structural/brand color; Harbor Blue
+ * (--accent) is the one interactive color used for every CTA, link, focus
+ * ring, progress fill and selected state. Warm Paper replaces a stark white
+ * page background. Success/warning are separate hues from --accent on
+ * purpose, so status color never collides with the "this is clickable" color.
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 210 25% 8%;
+    --background: 40 20% 97%;
+    --foreground: 213 32% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 25% 8%;
+    --card-foreground: 213 32% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 25% 8%;
+    --popover-foreground: 213 32% 14%;
 
-    --primary: 210 66% 17%;
+    --primary: 213 45% 16%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 210 25% 8%;
+    --accent: 194 63% 29%;
+    --accent-foreground: 0 0% 100%;
 
-    --muted: 210 15% 96%;
-    --muted-foreground: 210 10% 45%;
+    --secondary: 213 20% 96%;
+    --secondary-foreground: 213 32% 14%;
 
-    --accent: 210 60% 94%;
-    --accent-foreground: 210 66% 17%;
+    --muted: 40 15% 94%;
+    --muted-foreground: 214 10% 40%;
 
-    --destructive: 0 84% 60%;
+    --success: 142 68% 29%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 30 71% 39%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 74% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 15% 90%;
-    --input: 210 15% 90%;
-    --ring: 210 66% 17%;
+    --border: 40 20% 87%;
+    --input: 40 20% 87%;
+    --ring: 194 63% 29%;
 
+    /* --radius: 0.625rem (10px) already yields the approved scale via
+       tailwind.config.ts: lg=10px (cards), md=8px (buttons/inputs),
+       sm=6px (badges) — unchanged, no drift from the design system. */
     --radius: 0.625rem;
   }
 
@@ -69,6 +86,18 @@
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
+  }
+}
+
+/* Respect the OS-level motion preference everywhere, not per-component. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

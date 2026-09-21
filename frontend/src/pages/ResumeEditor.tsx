@@ -1,50 +1,17 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useBlocker, useLocation, useParams } from "react-router-dom";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Loader2,
-} from "lucide-react";
+import { AlertCircle, Check, ArrowLeft, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ApiError } from "@/services/api";
 import { hasToken } from "@/services/authStorage";
 import { getResume, updateResume } from "@/services/resumeApi";
-import { toEditableFields, type ResumeEditableFields } from "@/types/resume";
-import { CertificationsSection } from "@/components/resume-editor/CertificationsSection";
-import { EducationSection } from "@/components/resume-editor/EducationSection";
-import { ExperienceSection } from "@/components/resume-editor/ExperienceSection";
-import { FormField } from "@/components/resume-editor/FormField";
-import { LanguagesSection } from "@/components/resume-editor/LanguagesSection";
-import { PersonalInfoSection } from "@/components/resume-editor/PersonalInfoSection";
-import { ReferencesSection } from "@/components/resume-editor/ReferencesSection";
-import { SectionCard } from "@/components/resume-editor/SectionCard";
-import { SkillsSection } from "@/components/resume-editor/SkillsSection";
-import { Stepper } from "@/components/resume-editor/Stepper";
-import { SummarySection } from "@/components/resume-editor/SummarySection";
-import { TemplateSelector } from "@/components/resume-editor/TemplateSelector";
+import { trackEvent } from "@/services/analytics";
+import { toEditableFields, type ResumeEditableFields, type ResumeTemplate } from "@/types/resume";
+import { ResumeTitleField, ResumeWizard } from "@/components/resume-editor/ResumeWizard";
 import { VisibilitySection } from "@/components/resume-editor/VisibilitySection";
-import { ResumePreview } from "@/components/resume-preview/ResumePreview";
-import { PrintableResume } from "@/components/resume-preview/PrintableResume";
 
 type LoadStatus = "loading" | "ready" | "notfound" | "unauthorized" | "error";
 type SaveMessage = { type: "success" | "error"; text: string } | null;
-
-const STEP_LABELS = [
-  "Personal",
-  "Summary",
-  "Experience",
-  "Education",
-  "Certifications",
-  "Skills & Languages",
-  "References",
-  "Design",
-] as const;
-const LAST_STEP = STEP_LABELS.length - 1;
 
 const CenteredMessage = ({ children }: { children: ReactNode }) => (
   <div className="container flex min-h-[60vh] flex-col items-center justify-center gap-4 py-16 text-center">
@@ -81,7 +48,7 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
   });
 
   const goToStep = useCallback((next: number) => {
-    const clamped = Math.max(0, Math.min(LAST_STEP, next));
+    const clamped = Math.max(0, Math.min(7, next));
     setStep(clamped);
     setFurthest((f) => Math.max(f, clamped));
   }, []);
@@ -152,6 +119,14 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
     setSaveMessage(null);
   }, []);
 
+  const handleTemplateChange = useCallback(
+    (template: ResumeTemplate) => {
+      patch({ template });
+      trackEvent("template_selected", { template });
+    },
+    [patch],
+  );
+
   // Download PDF = print the off-screen A4 <PrintableResume> (which renders the
   // current editor state via the selected template). No API call — downloading
   // never changes what's stored in the database.
@@ -159,6 +134,7 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
     setPdfError("");
     try {
       window.print();
+      trackEvent("resume_downloaded");
     } catch {
       setPdfError("Couldn’t open the print dialog. Please try again.");
     }
@@ -174,6 +150,7 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
       setFields(editable);
       setSavedSnapshot(JSON.stringify(editable));
       setSaveMessage({ type: "success", text: "Saved" });
+      trackEvent("resume_saved");
     } catch (err: unknown) {
       if (err instanceof ApiError && err.status === 401) {
         setStatus("unauthorized");
@@ -244,48 +221,58 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Link
-            to="/dashboard"
-            className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
-          <h1
-            className="truncate text-sm font-medium"
-            title={fields.title.trim() || "Untitled resume"}
-          >
-            {fields.title.trim() || "Untitled resume"}
-          </h1>
-        </div>
+      <div className="mb-6 space-y-3">
+        <Link
+          to="/dashboard"
+          className="inline-flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to CVs
+        </Link>
 
-        <div className="flex items-center gap-3">
-          <span aria-live="polite" className="text-sm">
-            {dirty ? (
-              <span className="text-amber-600">Unsaved changes</span>
-            ) : saveMessage?.type === "success" ? (
-              <span className="inline-flex items-center gap-1 text-green-600">
-                <Check className="h-4 w-4" /> Saved
-              </span>
-            ) : null}
-          </span>
-          <Button
-            variant="outline"
-            onClick={handleDownloadPdf}
-            title="Opens your browser's print dialog — choose “Save as PDF”"
-          >
-            <Download /> Download PDF
-          </Button>
-          <Button onClick={handleSave} disabled={saving || !dirty}>
-            {saving ? (
-              <>
-                <Loader2 className="animate-spin" /> Saving…
-              </>
-            ) : (
-              "Save resume"
-            )}
-          </Button>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1
+              className="truncate text-xl font-semibold sm:text-2xl"
+              title={fields.title.trim() || "Untitled resume"}
+            >
+              {fields.title.trim() || "Untitled resume"}
+            </h1>
+            <p aria-live="polite" className="mt-0.5 text-sm">
+              {saving ? (
+                <span className="inline-flex items-center gap-1 text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…
+                </span>
+              ) : dirty ? (
+                <span className="text-warning">Unsaved changes</span>
+              ) : saveMessage?.type === "success" ? (
+                <span className="inline-flex items-center gap-1 text-success">
+                  <Check className="h-3.5 w-3.5" /> Saved
+                </span>
+              ) : (
+                <span className="text-muted-foreground">Last saved version</span>
+              )}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleDownloadPdf}
+              title="Opens your browser's print dialog — choose “Save as PDF”"
+              aria-label="Download PDF"
+            >
+              <Download /> <span className="hidden sm:inline">Download PDF</span>
+            </Button>
+            <Button onClick={handleSave} disabled={saving || !dirty}>
+              {saving ? (
+                <>
+                  <Loader2 className="animate-spin" /> Saving…
+                </>
+              ) : (
+                "Save resume"
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -299,155 +286,42 @@ const ResumeEditorInner = ({ id }: { id: string }) => {
         </div>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-        {/* Editor wizard */}
-        <div className="space-y-6 lg:min-w-0">
-          <Stepper steps={[...STEP_LABELS]} current={step} furthest={furthest} onStep={goToStep} />
-
-          {step === 0 && (
-            <>
-              <SectionCard title="Resume details" description="A name to identify this resume.">
-                <FormField label="Resume title">
-                  {(fieldId) => (
-                    <Input
-                      id={fieldId}
-                      value={fields.title}
-                      disabled={saving}
-                      placeholder="Software Developer Resume"
-                      onChange={(e) => patch({ title: e.target.value })}
-                    />
-                  )}
-                </FormField>
-              </SectionCard>
-              <PersonalInfoSection
-                value={fields.personalInfo}
-                disabled={saving}
-                onChange={(personalInfo) => patch({ personalInfo })}
-              />
-            </>
-          )}
-
-          {step === 1 && (
-            <SummarySection
-              value={fields.summary}
-              disabled={saving}
-              onChange={(summary) => patch({ summary })}
-            />
-          )}
-
-          {step === 2 && (
-            <ExperienceSection
-              items={fields.experience}
-              disabled={saving}
-              onChange={(experience) => patch({ experience })}
-            />
-          )}
-
-          {step === 3 && (
-            <EducationSection
-              items={fields.education}
-              disabled={saving}
-              onChange={(education) => patch({ education })}
-            />
-          )}
-
-          {step === 4 && (
-            <CertificationsSection
-              items={fields.certifications}
-              disabled={saving}
-              onChange={(certifications) => patch({ certifications })}
-            />
-          )}
-
-          {step === 5 && (
-            <>
-              <SkillsSection
-                skills={fields.skills}
-                disabled={saving}
-                onChange={(skills) => patch({ skills })}
-              />
-              <LanguagesSection
-                items={fields.languages}
-                disabled={saving}
-                onChange={(languages) => patch({ languages })}
-              />
-            </>
-          )}
-
-          {step === 6 && (
-            <ReferencesSection
-              items={fields.references}
-              disabled={saving}
-              onChange={(references) => patch({ references })}
-            />
-          )}
-
-          {step === 7 && (
-            <>
-              <TemplateSelector
-                value={fields.template}
-                disabled={saving}
-                onChange={(template) => patch({ template })}
-              />
-              <VisibilitySection
-                resumeId={id}
-                isPublic={visibility.isPublic}
-                publicSlug={visibility.publicSlug}
-                onChange={setVisibility}
-                onUnauthorized={() => setStatus("unauthorized")}
-              />
-            </>
-          )}
-
-          <div className="flex items-center justify-between gap-3 pb-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => goToStep(step - 1)}
-              disabled={step === 0}
-            >
-              <ChevronLeft /> Back
-            </Button>
-            {step < LAST_STEP ? (
-              <Button type="button" onClick={() => goToStep(step + 1)}>
-                Next <ChevronRight />
-              </Button>
+      <ResumeWizard
+        fields={fields}
+        onPatch={patch}
+        onTemplateChange={handleTemplateChange}
+        disabled={saving}
+        step={step}
+        furthest={furthest}
+        onStep={goToStep}
+        titleField={
+          <ResumeTitleField
+            value={fields.title}
+            disabled={saving}
+            onChange={(title) => patch({ title })}
+          />
+        }
+        designExtra={
+          <VisibilitySection
+            resumeId={id}
+            isPublic={visibility.isPublic}
+            publicSlug={visibility.publicSlug}
+            onChange={setVisibility}
+            onUnauthorized={() => setStatus("unauthorized")}
+          />
+        }
+        finishSlot={
+          <Button onClick={handleSave} disabled={saving || !dirty}>
+            {saving ? (
+              <>
+                <Loader2 className="animate-spin" /> Saving…
+              </>
             ) : (
-              <Button onClick={handleSave} disabled={saving || !dirty}>
-                {saving ? (
-                  <>
-                    <Loader2 className="animate-spin" /> Saving…
-                  </>
-                ) : (
-                  "Save resume"
-                )}
-              </Button>
+              "Save resume"
             )}
-          </div>
-        </div>
-
-        {/* Live preview — reads the editor state directly, no save required.
-            Decorative: it duplicates the form data as a visual mock-up, so it is
-            hidden from assistive tech (which would otherwise see a second copy of
-            every heading). The editable form is the accessible source of truth. */}
-        <div className="lg:sticky lg:top-6">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Live preview</span>
-            <span className="text-xs capitalize text-muted-foreground">
-              {fields.template} template
-            </span>
-          </div>
-          <div
-            className="lg:max-h-[calc(100vh-8rem)] lg:overflow-auto lg:pr-1"
-            aria-hidden="true"
-          >
-            <ResumePreview data={fields} />
-          </div>
-        </div>
-      </div>
-
-      {/* Off-screen A4 document used by "Download PDF" (window.print). */}
-      <PrintableResume data={fields} />
+          </Button>
+        }
+      />
     </div>
   );
 };

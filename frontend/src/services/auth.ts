@@ -1,10 +1,12 @@
 import { request } from "./api";
 import { clearToken, setToken } from "./authStorage";
+import { trackEvent } from "./analytics";
 
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  role: "user" | "admin";
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +37,7 @@ export async function register(
     body: { name, email, password },
   });
   setToken(token);
+  trackEvent("account_registered");
   return user;
 }
 

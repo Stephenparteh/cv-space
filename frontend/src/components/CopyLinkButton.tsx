@@ -5,6 +5,8 @@ import { Button, type ButtonProps } from "@/components/ui/button";
 interface Props {
   value: string;
   label?: string;
+  /** Set this when `label` is empty so an icon-only button still has an accessible name. */
+  "aria-label"?: string;
   size?: ButtonProps["size"];
   variant?: ButtonProps["variant"];
   className?: string;
@@ -14,6 +16,7 @@ interface Props {
 export function CopyLinkButton({
   value,
   label = "Copy link",
+  "aria-label": ariaLabel,
   size = "sm",
   variant = "outline",
   className,
@@ -40,10 +43,19 @@ export function CopyLinkButton({
     timer.current = setTimeout(() => setState("idle"), 2500);
   };
 
+  const visibleText = state === "copied" ? "Link copied" : state === "error" ? "Press Ctrl+C to copy" : label;
+
   return (
-    <Button type="button" size={size} variant={variant} className={className} onClick={copy}>
+    <Button
+      type="button"
+      size={size}
+      variant={variant}
+      className={className}
+      onClick={copy}
+      aria-label={visibleText ? undefined : ariaLabel ?? "Copy link"}
+    >
       {state === "copied" ? <Check /> : <Copy />}
-      {state === "copied" ? "Link copied" : state === "error" ? "Press Ctrl+C to copy" : label}
+      {visibleText}
     </Button>
   );
 }

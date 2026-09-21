@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test:api": "tsx --test scripts/verify-resume-api.ts"
+    "test:api": "tsx --test scripts/verify-resume-api.ts scripts/verify-m8-api.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

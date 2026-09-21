@@ -12,14 +12,14 @@ interface SectionCardProps {
 export function SectionCard({ title, description, action, children }: SectionCardProps) {
   return (
     <Card>
-      <CardHeader className="flex-row items-start justify-between gap-3 space-y-0">
+      <CardHeader className="flex-row items-start justify-between gap-3 space-y-0 border-b border-border pb-4">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold leading-none tracking-tight">{title}</h2>
+          <h2 className="text-base font-semibold leading-none tracking-tight">{title}</h2>
           {description ? <CardDescription>{description}</CardDescription> : null}
         </div>
         {action}
       </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
+      <CardContent className="space-y-4 pt-6">{children}</CardContent>
     </Card>
   );
 }

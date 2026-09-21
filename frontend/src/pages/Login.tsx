@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { FormField } from "@/components/resume-editor/FormField";
 import { ApiError } from "@/services/api";
 import { login, register } from "@/services/auth";
@@ -18,7 +19,9 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const next = safeNext(searchParams.get("next"));
 
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<Mode>(
+    searchParams.get("mode") === "register" ? "register" : "login",
+  );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,9 +97,8 @@ const Login = () => {
 
             <FormField label="Password" hint={mode === "register" ? "At least 8 characters." : undefined}>
               {(id) => (
-                <Input
+                <PasswordInput
                   id={id}
-                  type="password"
                   value={password}
                   autoComplete={mode === "register" ? "new-password" : "current-password"}
                   required

@@ -51,11 +51,44 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      // Named content widths — a page picks exactly one of these instead of
+      // an ad hoc max-w-*. Not yet applied to any page (foundation only).
+      maxWidth: {
+        "content-narrow": "40rem" /* 640px  — single-focus forms */,
+        "content-standard": "48rem" /* 768px  — long-form reading */,
+        "content-wide": "72rem" /* 1152px — card-grid browse screens */,
+        "content-app": "80rem" /* 1280px — the working editor surface */,
+      },
+      boxShadow: {
+        flat: "none",
+        card: "0 1px 2px rgba(19, 37, 63, 0.06)",
+        "card-hover": "0 4px 12px rgba(19, 37, 63, 0.08)",
+        paper: "0 8px 24px rgba(19, 37, 63, 0.10)",
+        floating: "0 12px 32px rgba(19, 37, 63, 0.16)",
+      },
+      transitionDuration: {
+        micro: "150ms",
+        standard: "225ms",
+        large: "275ms",
+        celebration: "400ms",
+        progress: "300ms",
+      },
+      transitionTimingFunction: {
+        standard: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
       keyframes: {
         "accordion-down": {

@@ -1,9 +1,10 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { emptyEducation, type EducationItem } from "@/types/resume";
 import { FormField } from "./FormField";
+import { RepeatableItemHeader } from "./RepeatableItemHeader";
 import { SectionCard } from "./SectionCard";
 
 interface Props {
@@ -35,21 +36,13 @@ export function EducationSection({ items, onChange, disabled }: Props) {
         <ol className="space-y-6">
           {items.map((item, index) => (
             <li key={index} className="rounded-md border border-border p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Education {index + 1}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => remove(index)}
-                  disabled={disabled}
-                  aria-label={`Remove education ${index + 1}`}
-                >
-                  <Trash2 /> Remove
-                </Button>
-              </div>
+              <RepeatableItemHeader
+                title={item.institution.trim() || `Education ${index + 1}`}
+                meta={item.degree.trim() || undefined}
+                onRemove={() => remove(index)}
+                removeLabel={`Remove education ${index + 1}`}
+                disabled={disabled}
+              />
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField label="Institution">

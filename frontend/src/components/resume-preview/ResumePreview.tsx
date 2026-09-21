@@ -11,7 +11,7 @@ interface Props {
  */
 export function ResumePreview({ data }: Props) {
   return (
-    <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-border bg-white shadow-paper">
       <div className="overflow-x-auto">
         <div className="mx-auto w-full max-w-[820px] px-6 py-8 sm:px-10">
           <ResumeDocument data={data} />

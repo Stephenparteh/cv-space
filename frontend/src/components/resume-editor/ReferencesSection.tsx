@@ -1,8 +1,9 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emptyReference, type ReferenceItem } from "@/types/resume";
 import { FormField } from "./FormField";
+import { RepeatableItemHeader } from "./RepeatableItemHeader";
 import { SectionCard } from "./SectionCard";
 
 interface Props {
@@ -43,21 +44,13 @@ export function ReferencesSection({ items, onChange, disabled }: Props) {
         <ol className="space-y-6">
           {items.map((item, index) => (
             <li key={index} className="rounded-md border border-border p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Reference {index + 1}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => remove(index)}
-                  disabled={disabled}
-                  aria-label={`Remove reference ${index + 1}`}
-                >
-                  <Trash2 /> Remove
-                </Button>
-              </div>
+              <RepeatableItemHeader
+                title={item.name.trim() || `Reference ${index + 1}`}
+                meta={item.position.trim() || undefined}
+                onRemove={() => remove(index)}
+                removeLabel={`Remove reference ${index + 1}`}
+                disabled={disabled}
+              />
               <div className="grid gap-4 sm:grid-cols-2">
                 {FIELDS.map((field) => (
                   <FormField key={field.key} label={field.label}>

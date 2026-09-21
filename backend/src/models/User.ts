@@ -3,10 +3,14 @@ import { Schema, model, type Document, type Model } from "mongoose";
 
 const BCRYPT_ROUNDS = 10;
 
+export const USER_ROLES = ["user", "admin"] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
@@ -19,6 +23,7 @@ export interface SafeUser {
   id: string;
   name: string;
   email: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +49,13 @@ const userSchema = new Schema<IUser>(
       minlength: 8,
       // Excluded from query results by default; login opts back in with .select("+password").
       select: false,
+    },
+    // Never settable by the client (see validators.ts) — always defaults to
+    // "user". Promote an account with scripts/promote-admin.ts.
+    role: {
+      type: String,
+      enum: USER_ROLES,
+      default: "user",
     },
   },
   {

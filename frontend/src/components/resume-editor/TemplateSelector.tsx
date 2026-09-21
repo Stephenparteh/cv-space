@@ -1,9 +1,11 @@
-import { RESUME_TEMPLATES, type ResumeTemplate } from "@/types/resume";
+import { RESUME_TEMPLATES, type ResumeEditableFields, type ResumeTemplate } from "@/types/resume";
 import { cn } from "@/lib/utils";
+import { TemplateThumbnail } from "@/components/resume-preview/TemplateThumbnail";
 import { SectionCard } from "./SectionCard";
 
 interface Props {
   value: ResumeTemplate;
+  data: ResumeEditableFields;
   onChange: (next: ResumeTemplate) => void;
   disabled?: boolean;
 }
@@ -17,10 +19,11 @@ const TEMPLATE_META: Record<ResumeTemplate, { label: string; description: string
   creative: { label: "Creative", description: "Accent colour and a timeline for roles." },
 };
 
-export function TemplateSelector({ value, onChange, disabled }: Props) {
+/** Each option renders your actual content in that template — not a text description. */
+export function TemplateSelector({ value, data, onChange, disabled }: Props) {
   return (
-    <SectionCard title="Template" description="Pick a layout — the preview updates instantly.">
-      <div className="grid gap-2.5 sm:grid-cols-2">
+    <SectionCard title="Template" description="Pick a layout — shown with your own content, exactly as it will look.">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {RESUME_TEMPLATES.map((template) => {
           const meta = TEMPLATE_META[template];
           const selected = value === template;
@@ -30,16 +33,14 @@ export function TemplateSelector({ value, onChange, disabled }: Props) {
               type="button"
               disabled={disabled}
               aria-pressed={selected}
+              aria-label={`${meta.label} template — ${meta.description}${selected ? " (selected)" : ""}`}
               onClick={() => onChange(template)}
-              className={cn(
-                "rounded-md border p-3 text-left transition-colors disabled:opacity-50",
-                selected
-                  ? "border-primary bg-primary/5 ring-1 ring-primary"
-                  : "border-border hover:border-foreground/30",
-              )}
+              className="flex flex-col gap-1.5 rounded-md text-left transition-opacity duration-micro disabled:opacity-50"
             >
-              <p className="text-sm font-medium">{meta.label}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{meta.description}</p>
+              <TemplateThumbnail data={{ ...data, template }} selected={selected} interactive />
+              <p className={cn("truncate px-0.5 text-sm font-medium", selected ? "text-accent" : "text-foreground")}>
+                {meta.label}
+              </p>
             </button>
           );
         })}

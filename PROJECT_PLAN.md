@@ -3,7 +3,10 @@
 **Repository:** `resume-builder-v2`
 **Document:** `PROJECT_PLAN.md`
 **Last Updated:** September 2026
-**Status:** Milestones 1–7 complete — app is production-ready pending hosting
+**Status:** Milestones 1–7 complete and deployed (Vercel + Render + Atlas).
+Milestone 8 (Guest Builder, Account Transfer & Admin Dashboard) implemented;
+DB-backed re-verification and deployment are pending an Atlas connectivity
+check — see Milestone 8 below.
 
 > **Roadmap note:** the plan was consolidated to 6 milestones, then split again
 > so M6 is **Resume Builder Expansion** and M7 is **PDF, QA & Production**
@@ -1431,6 +1434,78 @@ Known non-critical limitations:
 
 ---
 
+## Milestone 8 — Guest Builder, Account Transfer & Admin Dashboard
+
+Status:
+
+```text
+IMPLEMENTED — DB-backed verification blocked this session by an Atlas
+connectivity outage in this environment (see below); re-run before deploying.
+```
+
+Covers:
+
+* **Guest mode (no account required).** `/build` runs the full 8-step wizard —
+  same `ResumeWizard` component, same six templates, same PDF export — with
+  state kept only in this browser's `localStorage` (`rb_guest_resume`).
+  Nothing is sent to MongoDB while browsing as a guest.
+* **Reused, not duplicated.** The wizard body (stepper, all section forms,
+  live preview, `PrintableResume`) was extracted out of `ResumeEditor.tsx`
+  into `components/resume-editor/ResumeWizard.tsx`; both the authenticated
+  editor and the guest builder render the same component. No template or
+  editor-section code is duplicated.
+* **Save prompt, not a wall.** Clicking "Save my resume" as a guest opens an
+  explanatory dialog ("Want to save your resume?") with three real choices:
+  create an account, log in, or continue as a guest — never a silent failure,
+  never a bare redirect.
+* **Guest → account transfer.** Registering/logging in from that dialog sends
+  the user to `/resumes/claim-guest`, which POSTs the browser-local résumé to
+  the existing `POST /api/resumes` endpoint, then clears local guest state and
+  opens the new saved resume in the normal editor. A failed transfer leaves
+  the guest data in place (retryable, nothing lost) rather than losing it.
+* **Admin dashboard**, authorization enforced **server-side only**: a `role`
+  field (`"user" | "admin"`, default `"user"`) on `User`, a `requireAdmin`
+  middleware that re-reads the role from the database on every request (never
+  trusts the JWT or the client), and two protected endpoints —
+  `GET /api/admin/stats` (totals, template usage, 14-day trend) and
+  `GET /api/admin/activity` (recent signups / saved resumes / events). No
+  public self-promotion path exists; the only way to grant admin is
+  `backend/scripts/promote-admin.ts <email>`, run with shell/deploy access.
+* **Minimal anonymous analytics.** A new `AnalyticsEvent` collection records
+  only an event type, an optional `userId` (from a verified token, never the
+  request body), and an optional template name — never résumé content, names,
+  emails, or credentials. Events: `resume_started`, `resume_completed`,
+  `resume_downloaded`, `account_registered`, `resume_saved`,
+  `template_selected`, each fired once per genuine user action (guarded with
+  refs so React's dev-mode double-render/double-effect can't double-count).
+
+Known limitation — **could not run this session**: MongoDB Atlas rejected
+every connection attempt from this environment for the remainder of the
+session (confirmed at the driver level — TCP reachable, but server selection
+fails; consistent with the IP-allowlist/rotating-egress-IP issue noted
+earlier in this document). As a result:
+
+* `npm run test:api`'s DB-backed tests (both `verify-resume-api.ts` and the
+  new `verify-m8-api.ts`) could not execute — they **skipped**, not failed.
+  The 10 tests that don't need a database (auth guards, admin 401s, analytics
+  400s) all ran and passed.
+* The browser-based guest→account transfer, authenticated regression, and
+  admin-with-real-data checks could not run (they need the API + database).
+* What **did** run and pass: backend `tsc`/`build` (both apps), frontend
+  `tsc`/`lint`/`build`, and 28 headless-browser checks covering everything
+  that doesn't require the database — the entire guest flow end-to-end
+  (build, template switching, refresh persistence, PDF trigger, the save
+  dialog, "start new resume", 390px responsiveness), plus admin/claim-guest
+  fail-safe behavior while logged out.
+
+**Before deploying: re-run `npm run test:api` from an environment where
+Atlas is reachable, and re-run the full browser regression (guest → register
+→ transfer → dashboard; guest → log in → transfer; authenticated regression;
+admin authorization with a real promoted account) — see the M8 report for
+exact commands.**
+
+---
+
 ## Appendix — original 10-milestone breakdown (historical)
 
 ```text
@@ -1749,19 +1824,26 @@ Editor save + unsaved-changes protection     ✅
 
 # 46. CURRENT NEXT STEP
 
-Milestones 1–7 are complete and verified (typecheck, build, lint, API tests,
-headless-browser tests, PDF suite, security probe, a11y audit, and responsive
-sweep all pass).
+Milestones 1–7 are complete, verified, and deployed. Milestone 8 (guest
+builder, guest→account transfer, admin dashboard, minimal analytics) is
+implemented, typechecked, built, and verified everywhere that doesn't need a
+live database — see Milestone 8 above for exactly what could and couldn't run
+this session.
 
-The next step is **hosting** — not a code milestone:
+Before deploying M8:
 
-1. Provision a Node host for `backend/` and a static host for `frontend/dist`
-   (see `DEPLOYMENT.md`).
-2. Set the backend env vars (`MONGODB_URI`, `JWT_SECRET`, `NODE_ENV=production`,
-   `CORS_ORIGIN`) and the frontend build var (`VITE_API_BASE_URL`).
-3. Deploy backend → verify `GET /api/health` → build & deploy frontend →
-   set `CORS_ORIGIN` to the real frontend origin → smoke test on real devices.
-4. Then begin the dedicated post-M7 **UI/UX refinement** phase.
+1. Confirm MongoDB Atlas is reachable from wherever `npm run test:api` runs,
+   then run it — expect all tests to pass (not skip).
+2. Run the full browser regression: guest builds a resume → registers →
+   confirm it lands in the dashboard; guest builds a resume → logs into an
+   existing account → confirm transfer; normal authenticated regression
+   (dashboard/editor/PDF/public resume/directory); admin authorization
+   (401 logged out, 403 as a normal user, 200 as an admin).
+3. Promote your own account to admin: `npx tsx scripts/promote-admin.ts <your-email>`
+   from `backend/` (shell/deploy access only — never over HTTP).
+4. Deploy backend, then frontend, per `DEPLOYMENT.md` (no new environment
+   variables were introduced by M8).
+5. Then begin the dedicated post-M7/M8 **UI/UX refinement** phase.
 
 ---
 

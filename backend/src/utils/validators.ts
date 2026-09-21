@@ -10,6 +10,7 @@ import {
   type ReferenceItem,
   type ResumeTemplate,
 } from "../models/Resume.js";
+import { ANALYTICS_EVENT_TYPES, type AnalyticsEventType } from "../models/AnalyticsEvent.js";
 
 // Pragmatic email check — backend guards data integrity, the frontend does UX.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -442,4 +443,34 @@ export const parseProfileInput = (body: unknown): ProfileInput => {
     }
   }
   return out;
+};
+
+/* -------------------------------------------------------------------------- */
+/*  Analytics event validation (M8)                                           */
+/* -------------------------------------------------------------------------- */
+
+export interface AnalyticsEventInput {
+  type: AnalyticsEventType;
+  template: string | null;
+}
+
+/**
+ * Body of POST /api/analytics/events. Deliberately tiny: an event type and,
+ * only for template-related events, a template name. `userId` is never read
+ * from the body — it comes from `optionalAuth` (a verified JWT), never from
+ * the client. Anything else in the body is ignored, not merged in, so a
+ * client can never smuggle résumé content or personal data into an event.
+ */
+export const parseAnalyticsEventInput = (body: unknown): AnalyticsEventInput => {
+  const src = (body ?? {}) as Record<string, unknown>;
+  if (!ANALYTICS_EVENT_TYPES.includes(src.type as AnalyticsEventType)) {
+    throw new ApiError(400, `type must be one of: ${ANALYTICS_EVENT_TYPES.join(", ")}`);
+  }
+  const rawTemplate = clampStr(src.template, 40);
+  if (rawTemplate && !RESUME_TEMPLATES.includes(rawTemplate as ResumeTemplate)) {
+    // An unrecognized template name is dropped rather than rejected — a stray
+    // value here should never block or crash an analytics call.
+    return { type: src.type as AnalyticsEventType, template: null };
+  }
+  return { type: src.type as AnalyticsEventType, template: rawTemplate || null };
 };

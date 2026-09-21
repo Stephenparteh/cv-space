@@ -38,3 +38,29 @@ export const requireAuth = (
     throw new ApiError(401, expired ? "Token expired" : "Invalid token");
   }
 };
+
+/**
+ * Attaches `req.userId` when a valid Bearer token is present, but never
+ * rejects the request when it's missing, malformed, or expired — the caller
+ * is simply treated as anonymous. For public-but-optionally-attributed
+ * endpoints (currently: analytics events) where authentication is a bonus,
+ * not a requirement.
+ */
+export const optionalAuth = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
+  const header = req.headers.authorization;
+  if (header?.startsWith(BEARER_PREFIX)) {
+    const token = header.slice(BEARER_PREFIX.length).trim();
+    if (token) {
+      try {
+        req.userId = verifyAuthToken(token).sub;
+      } catch {
+        // Invalid/expired token on an optional-auth route — proceed anonymously.
+      }
+    }
+  }
+  next();
+};
